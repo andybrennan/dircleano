@@ -6,11 +6,23 @@
 #       and skip out of loop iteration.
 # v0.2a Corrected error in loop where processing stops if no files
 #       older than $DAYS have been found
+# v0.3  Renamed to dircleano. Moved config params to dircleano.conf
 
-DIR="/etc/opt/kerberosio/capture"
-USAGE=85 # disk utilisation
-DAYS=4 # delete files older than this
-LOG="/var/log/tidyup.log"
+
+if [ -e dircleano.conf ]; then
+    . dircleano.conf
+else
+    DIR="/etc/opt/kerberosio/capture"
+    USAGE=85 # disk utilisation
+    DAYS=4 # delete files older than this
+    LOG="/var/log/tidyup.log"
+fi
+
+# Sanity check before moving on...
+
+if [ -z $DIR ]; then
+    echo `date +'%b %d %X'` "ERROR: variables not set!" >> $LOG
+fi
 
 current_usage=`df -h / | grep root | awk '{print $5+0}'`
 echo `date +'%b %d %X'` "Current disk utilisation: $current_usage" >> $LOG
